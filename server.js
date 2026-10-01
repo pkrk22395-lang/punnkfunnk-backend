@@ -56,7 +56,7 @@ app.post('/api/shopify/orders', async (req, res) => {
   try {
     const { shop, apiSecret } = req.body;
     const shopDomain = shop || 'wowstores-in.myshopify.com';
-    const accessToken = apiSecret || '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';
+    const accessToken = apiSecret || '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';
 
     const response = await fetch(`https://${shopDomain}/admin/api/2024-01/orders.json?status=any&limit=250`, {
       method: 'GET',
