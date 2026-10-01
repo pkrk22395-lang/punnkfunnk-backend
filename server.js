@@ -51,7 +51,27 @@ app.post('/api/amazon/orders', async (req, res) => {
         res.status(500).json({ success: false, error: 'Amazon API Sync Failed' });
     }
 });
+// Shopify Orders Route
+app.post('/api/shopify/orders', async (req, res) => {
+  try {
+    const { shop, apiSecret } = req.body;
+    const shopDomain = shop || 'wowstores-in.myshopify.com';
+    const accessToken = apiSecret || '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';
 
+    const response = await fetch(`https://${shopDomain}/admin/api/2024-01/orders.json?status=any&limit=250`, {
+      method: 'GET',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    return res.status(response.status).json(data);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`PunnkFunnk Proxy Server running on port ${PORT}`);
