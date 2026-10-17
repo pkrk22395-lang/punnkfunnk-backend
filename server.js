@@ -76,3 +76,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`PunnkFunnk Proxy Server running on port ${PORT}`);
 });
+// Shopify OAuth Callback Route
+app.get('/api/shopify/callback', async (req, res) => {
+  const { shop, code } = req.query;
+  res.send(`App successfully installed on ${shop}! Code received.`);
+});
