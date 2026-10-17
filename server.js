@@ -53,12 +53,22 @@ app.post('/api/amazon/orders', async (req, res) => {
     }
 });
 
-// Shopify Orders Route
+// Shopify Orders Route (Multi-Store Safe & Independent Support)
 app.post('/api/shopify/orders', async (req, res) => {
     try {
         const { shop, apiSecret } = req.body;
         const shopDomain = shop || 'wowstores-in.myshopify.com';
-        const accessToken = apiSecret || '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';
+        
+        let accessToken = apiSecret;
+        if (!accessToken) {
+            if (shopDomain.includes('punnkfunnk')) {
+                // Punnkfunnk Credentials & Fallback
+                accessToken = process.env.PUNNKFUNNK_SHOPIFY_ACCESS_TOKEN || process.env.PUNNKFUNNK_SHOPIFY_CLIENT_SECRET || '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';
+            } else {
+                // Wowstores Safe & Protected Fallback
+                accessToken = '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'; 
+            }
+        }
 
         const response = await fetch(`https://${shopDomain}/admin/api/2024-01/orders.json?status=any&limit=250`, {
             method: 'GET',
@@ -68,6 +78,12 @@ app.post('/api/shopify/orders', async (req, res) => {
             },
         });
 
+        const data = await response.json();
+        return res.status(response.status).json(data);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
         const data = await response.json();
         return res.status(response.status).json(data);
     } catch (error) {
