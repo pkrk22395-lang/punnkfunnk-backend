@@ -71,6 +71,27 @@ app.post('/api/shopify/orders', async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
+// Shopify OAuth Callback Route
+app.get('/api/shopify/callback', async (req, res) => {
+  const { shop, code } = req.query;
+  
+  if (code) {
+    try {
+      await fetch(`https://${shop}/admin/oauth/access_token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_id: process.env.PUNNKFUNNK_SHOPIFY_CLIENT_ID || '86a1dd65b872cf0890a33046e6214c20',
+          client_secret: process.env.PUNNKFUNNK_SHOPIFY_CLIENT_SECRET,
+          code: code
+        })
+      });
+    } catch (e) {
+      console.log('Token exchange error', e);
+    }
+  }
+
+  res.redirect(`https://${shop}/admin/apps`);
 });
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
