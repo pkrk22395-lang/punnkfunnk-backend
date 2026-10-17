@@ -9,7 +9,8 @@ app.use(express.json());
 
 // Flipkart API Route
 app.post('/api/flipkart/orders', async (req, res) => {
-    const { appId, appSecret } = req.body;
+    const appId = req.body.appId || process.env.FLIPKART_APP_ID || '878458478b166a375bb5058a1b0801b5b023';
+    const appSecret = req.body.appSecret || process.env.FLIPKART_APP_SECRET || '241dda61d4c1af4cc80f432e1aad38c85';
     try {
         const authHeader = Buffer.from(`${appId}:${appSecret}`).toString('base64');
         const tokenResponse = await axios.get('https://api.flipkart.net/oauth-service/oauth/token?grant_type=client_credentials&scope=seller_api', {
